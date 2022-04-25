@@ -1,1 +1,4 @@
 db.sqlite3
+/app01/migrations
+/app01/__pycache__
+/salary/__pycache__
