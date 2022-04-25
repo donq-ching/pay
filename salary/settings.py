@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,13 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app01.apps.App01Config',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -56,7 +58,7 @@ ROOT_URLCONF = 'salary.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,3 +127,131 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',  # 使用rest_framework_simplejwt验证身份
+#         'rest_framework.authentication.SessionAuthentication',
+#         'rest_framework.authentication.BasicAuthentication'
+#     ],
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.IsAuthenticated'    # 默认权限为验证用户
+#     ],
+# }
+
+# import datetime
+# # simplejwt配置， 需要导入datetime模块
+# SIMPLE_JWT = {
+#     # token有效时长
+#     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
+#     # token刷新后的有效时间
+#     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
+# }
+
+
+# # 发送邮箱验证码
+# EMAIL_HOST = "smtp.qq.com"     # 服务器
+# EMAIL_PORT = 25                 # 一般情况下都为25
+# EMAIL_HOST_USER = "qq账号@qq.com"     # 账号
+# EMAIL_HOST_PASSWORD = "授权码"     # （上面保存的授权码）
+# EMAIL_USE_TLS = True       # 一般都为False
+# EMAIL_FROM = "qq账号@qq.com"      # 邮箱来自
+# email_title = '邮箱激活'
+
+# simpleUI
+SIMPLEUI_HOME_INFO = False
+SIMPLEUI_HOME_QUICK = True
+SIMPLEUI_HOME_ACTION = True
+SIMPLEUI_ANALYSIS = False
+# SIMPLEUI_HOME_TITLE = 【首页】按钮文案配置
+# SIMPLEUI_HOME_PAGE = 可用于嵌入其他链接，这里可以直接方便的嵌入报表链接
+SIMPLEUI_HOME_ICON = 'el el-icon-platform-eleme'
+# ICON 支持element-ui和fontawesome  eg：fa fa-user
+
+# 图标ICON 样式查看
+# https://element.eleme.cn/#/zh-CN/component/icon
+# http://www.fontawesome.com.cn/cheatsheet/
+
+# project的setting文件中增加如下配置，icon信息可以参考http://www.fontawesome.com.cn/cheatsheet/
+SIMPLEUI_CONFIG = {
+    'system_keep': False,  # 关闭系统菜单
+    # 'menu_display': ['app01', '认证与授权'],
+    'dynamic': False,    # 设置是否开启动态菜单, 默认为False. 如果开启, 则会在每次用户登陆时动态展示菜单内容
+    'menus': [{
+        'app': 'app01',
+        'name': '薪酬应用',
+        'icon': 'fa fa-credit-card',
+        'models': [{
+            'name': '用户',
+            'icon': 'fa fa-user',
+            'url': '/admin/app01/user/'
+        },
+            {
+            'name': '职位',
+            'icon': 'fa fa-id-card',
+            'url': '/admin/app01/postion/'
+        },
+            {
+            'name': '薪资',
+            'icon': 'fa fa-credit-card',
+            'url': '/admin/app01/salary/'
+        },
+            {
+            'name': '请假',
+            'icon': 'fa fa-thermometer-three-quarters',
+            'url': '/admin/app01/leave/'
+        },
+            {
+            'name': '周计划与日报',
+            'icon': 'fa fa-flag',
+            'url': '/admin/app01/report/'
+        },
+            {
+            'name': '加班',
+            'icon': 'fa fa-briefcase',
+            'url': '/admin/app01/work_overtime/'
+        },
+            {
+            'name': '部门',
+            'icon': 'fa fa-building',
+            'url': '/admin/app01/department/'
+        },
+            {
+            'name': '岗位等级',
+            'icon': 'fa fa-beer',
+            'url': '/admin/app01/position_level/'
+        }]
+    },
+        {
+        'app': 'auth',
+        'name': '权限认证',
+        'icon': 'fas fa-user-shield',
+        'models': [
+            {
+                'name': '用户列表',
+                'icon': 'fa fa-user',
+                'url': 'auth/user/'
+            },
+            {
+                'name': '用户组',
+                'icon': 'fa fa-th-list',
+                'url': 'auth/group/'
+            }
+        ]
+    }, {
+        'name': '上传数据',
+        'icon': 'fa fa-table',
+        'models': [
+            {
+                'name': '请假',
+                'icon': 'fa fa-user',
+                'url': 'http://127.0.0.1/load/leave.html'
+            },
+            {
+                'name': '周计划与日报',
+                'icon': 'fa fa-th-list',
+                'url': 'https://www.bilibili.com/video/BV1Sz4y1o7E8?p=8'
+            }
+        ]
+    }]
+}
