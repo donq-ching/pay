@@ -23,26 +23,22 @@
 			<div class="row">
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 main">
 					<div class="table-responsive" id="app">
-						<h1>请假文件上传</h1>
+						<h1>日报文件上传</h1>
 						<input type="file" id="file" />
 						<button @click="upload('0')">提交</button>
 						<table class="table table-striped">
 							<thead>
 								<tr>
-									<th>审批编号</th>
+									<th>序号</th>
+									<th>汇报时间</th>
 									<th>姓名</th>
-									<th>请假类型</th>
-									<th>开始时间</th>
-									<th>结束时间</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr v-for="el in leave">
+								<tr v-for="(el, index) in leave">
+									<td>[[ index ]]</td>
 									<td>[[ el[0] ]]</td>
 									<td>[[ el[1] ]]</td>
-									<td>[[ el[2] ]]</td>
-									<td>[[ el[3] ]]</td>
-									<td>[[ el[4] ]]</td>
 								</tr>
 							</tbody>
 						</table>
@@ -68,40 +64,39 @@
 				delimiters: ["[[", "]]"],
 				data: {
 					leave: [],
-					message: []
+				 message: []
 				},
 				methods: {
 					upload(step) {
-						let data = document.getElementById("file").files[0];
-						var formData = new FormData();
-						formData.append("data", data);
-						formData.append("step", step);
-						let _this = this;
+						let data = document.getElementById("file").files[0]
+						var formData = new FormData()
+						formData.append("data", data)
+						formData.append("step", step)
+						formData.append("report_type", 1)
+						let _this = this
 						$.ajax({
 							type: "POST",
 							data: formData,
-							url: "http://127.0.0.1/load_leave_data/", // 请求的uploadFile.php的地址
-							dataType: "json", // 传递数据的格式
-							async: false, // 这是重要的一步，防止重复提交的
-							cache: false, // 设置为false，上传文件不需要缓存。
-							contentType: false, // 设置为false,因为是构造的FormData对象,所以这里设置为false。
-							processData: false, // 设置为false,因为data值是FormData对象，不需要对数据做处理。
+							url: "http://127.0.0.1/load_report_data/",
+							dataType: "json",
+							async: false,
+							cache: false,
+							contentType: false,
+							processData: false,
 							success: function(data) {
 								if (step == '0') {
-									_this.leave = data;
+									_this.leave = data
 								} else {
-									_this.message = data;
+									_this.message = data
 								}
-
-								console.log(this.leave);
 							},
 							error: function(data) {
-								console.log("错误");
+								console.log("错误")
 							},
-						});
+						})
 					},
 				},
-			});
+			})
 		</script>
 	</body>
 </html>

@@ -115,7 +115,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -220,6 +220,16 @@ SIMPLEUI_CONFIG = {
             'name': '岗位等级',
             'icon': 'fa fa-beer',
             'url': '/admin/app01/position_level/'
+        },
+            {
+            'name': 'Token',
+            'icon': 'fa fa-beer',
+            'url': '/admin/app01/usertoken/'
+        },
+            {
+            'name': '验证码',
+            'icon': 'fa fa-beer',
+            'url': '/admin/app01/usercode/'
         }]
     },
         {
@@ -250,7 +260,7 @@ SIMPLEUI_CONFIG = {
             {
                 'name': '周计划与日报',
                 'icon': 'fa fa-th-list',
-                'url': 'https://www.bilibili.com/video/BV1Sz4y1o7E8?p=8'
+                'url': 'http://127.0.0.1/load/report.html'
             }
         ]
     }]

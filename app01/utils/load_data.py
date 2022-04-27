@@ -1,9 +1,11 @@
-import django
 import pandas as pd
-import numpy as np
-from ..models import Leave, User, Report
-from django.shortcuts import HttpResponse
+
+from rest_framework.response import Response
 from django.http import JsonResponse
+
+from ..models import Leave, User, Report
+
+
 
 
 def get_leave_code(leave):
@@ -14,7 +16,7 @@ def get_leave_code(leave):
             return el[0]
 
 
-def load_leave_data(request, path='D:\data/请假.xlsx'):
+def load_leave_data(request):
     '''
     @function 函数
 
@@ -30,30 +32,31 @@ def load_leave_data(request, path='D:\data/请假.xlsx'):
         0: 返回解析后的json数据
         1: 返回上传数据库后的消息
     '''
-    step = int(request.GET.get('step'))
+    step = int(request.POST.get('step'))
     df = pd.read_excel(request.FILES.get('data'))
 
-    # df = pd.read_excel(path)
     df = df[df['当前审批状态'] == '已通过']
     df = pd.DataFrame(data=df, columns=['审批编号', '申请人', '请假类型', '开始时间', '结束时间'])
     df_list = df.values.tolist()
 
     if step != 1:
         return JsonResponse(df_list, safe=False, json_dumps_params={'ensure_ascii': False})
+        # return Response(df_list)
 
-    ret = {'message': '上传失败'}
+    # 返回内容：
+    # 2. 重复list
+    # 3. 用户不存在list
+    ret = {'message': '上传失败', '重复': [], '用户不存在': []}
     for el in df_list:
-        try:
-            if Leave.objects.get(leave_id=el[0]):
-                continue
-        except:
-            pass
-        try:
-            user = User.objects.get(name=el[1])
-        except:
-            ret['message'] = '用户%s不存在' % el[1]
-            return JsonResponse(ret, json_dumps_params={'ensure_ascii': False})
+        if Leave.objects.filter(leave_id=el[0]):
+            ret['重复'].append(el)
+            continue
 
+        user = User.objects.filter(name=el[1])
+        if not user:
+            ret['用户不存在'].append(el)
+            continue
+        user = user[0]
         el[3] = str(el[3]).replace('上午', '08:30')
         el[3] = str(el[3]).replace('下午', '17:30')
         el[3] = str(el[3]).replace('/', '-')
@@ -67,11 +70,13 @@ def load_leave_data(request, path='D:\data/请假.xlsx'):
         leave.start_time = el[3]
         leave.end_time = el[4]
         leave.save()
-    ret['message'] = '上传成功'
+        ret['message'] = '部分上传成功'
+
+    # return Response(ret)
     return JsonResponse(ret, json_dumps_params={'ensure_ascii': False})
 
 
-def load_report_data(request, path='D:\data/日报.xlsx'):
+def load_report_data(request):
     
     '''
     @function 函数
@@ -89,12 +94,10 @@ def load_report_data(request, path='D:\data/日报.xlsx'):
         0: 返回解析后的json数据
         1: 返回上传数据库后的消息
     '''
-    report_type = int(request.GET.get('report_type'))
-    step = int(request.GET.get('step'))
-    # path = request.GET.get('path')
+    report_type = int(request.POST.get('report_type'))
+    step = int(request.POST.get('step'))
+    df = pd.read_excel(request.FILES.get('data'))
 
-    # print('report_type: ', report_type, 'step: ', step)
-    df = pd.read_excel(path)
     if report_type == 0:
         df = pd.DataFrame(data=df, columns=['提交时间', '申请人'])
     elif report_type == 1:
@@ -103,17 +106,22 @@ def load_report_data(request, path='D:\data/日报.xlsx'):
     df_list = df.values.tolist()
     if step != 1:
         return JsonResponse(df_list, safe=False, json_dumps_params={'ensure_ascii': False})
+        # return Response(df_list)
 
+    ret = {'message':'上传失败', '用户不存在': []}
     for el in df_list:
-        try:
-            user = User.objects.get(name=el[1])
-        except:
+        user = User.objects.filter(name=el[1])
+        if not user:
+            ret['用户不存在'].append(el)
             continue
+        user = user[0]
         el[0] = str(el[0]).replace('/', '-')
         report = Report()
         report.user = user
         report.type = report_type
         report.time = el[0]
         report.save()
+        ret['message'] = '部分上传成功'
 
-    return JsonResponse({'message':'上传成功'}, json_dumps_params={'ensure_ascii': False})
+    return JsonResponse(ret, json_dumps_params={'ensure_ascii': False})
+    # return Response(ret)

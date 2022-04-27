@@ -18,17 +18,12 @@ from django.urls import path, include
 from app01 import urls as app01_urls
 from django.views.generic import TemplateView
 
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('app01/', include(app01_urls)),
-    # 获取Token的接口
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    # 刷新Token有效期的接口
-    path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    # 验证Token的有效性
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path('index.html', TemplateView.as_view(template_name='index.html')),
+    path('', include(app01_urls)),
+
+    # html
     path('load/leave.html', TemplateView.as_view(template_name='load/leave.html')),
+    path('load/report.html', TemplateView.as_view(template_name='load/report.html')),
 ]

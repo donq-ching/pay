@@ -20,8 +20,9 @@ import json
 from datetime import datetime
 from django.db import models
 
-
+# 增加了UID字段,大改
 class User(models.Model):
+    uid = models.CharField(verbose_name='用户唯一ID', primary_key=True, max_length=128)
     name = models.CharField(max_length=64, verbose_name='用户名')
     degree_choice = ((0, '高中'), (1, '专科'), (2, '本科'), (3, '硕士'), (4, '博士'))
     degree = models.SmallIntegerField(verbose_name='选择学历',
@@ -45,25 +46,35 @@ class User(models.Model):
         ordering = ['name']
 
 
-class UserAuth(models.Model):
+class UserToken(models.Model):
     user = models.OneToOneField(
         to="User", on_delete=models.CASCADE, verbose_name='关联用户')
     token = models.CharField(max_length=64, unique=True, verbose_name='token')
+
+    class Meta:
+        db_table = 'usertoken'
+        verbose_name = 'Token表'
+        verbose_name_plural = verbose_name
+
+
+class UserCode(models.Model):
+    user = models.OneToOneField(
+        to="User", on_delete=models.CASCADE, verbose_name='关联用户')
     code = models.CharField(max_length=64, unique=True, verbose_name='验证码')
     send_code_time = models.DateTimeField(
         verbose_name='发送时间', default=datetime.now)
 
-    def __str__(self):
-        _dict = {
-            'token': self.token,
-            'code': self.code,
-            'email': self.user.email,
-        }
-        return json.dumps(_dict)
+    # def __str__(self):
+    #     _dict = {
+    #         'token': self.token,
+    #         'code': self.code,
+    #         'email': self.user.email,
+    #     }
+    #     return json.dumps(_dict)
 
     class Meta:
-        db_table = 'userauth'
-        verbose_name = '验证表'
+        db_table = 'usercode'
+        verbose_name = '验证码表'
         verbose_name_plural = verbose_name
 
 

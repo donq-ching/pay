@@ -42,7 +42,7 @@ class Position_Level_Admin(admin.ModelAdmin):
 
     def department_name(self, obj):
         return obj.department.name
-    department_name.short_description = u'部门'
+    department_name.short_description = '部门'
 
 
 class PostionAdmin(admin.ModelAdmin):
@@ -55,15 +55,15 @@ class PostionAdmin(admin.ModelAdmin):
 
     def user_name(self, obj):
         return obj.user.name
-    user_name.short_description = u'用户名'
+    user_name.short_description = '用户名'
 
     def department_name(self, obj):
         return obj.level.department.name
-    department_name.short_description = u'部门'
+    department_name.short_description = '部门'
 
     def level_name(self, obj):
         return obj.postion_level.level
-    level_name.short_description = u'岗位等级'
+    level_name.short_description = '岗位等级'
 
 
 class SalaryAdmin(admin.ModelAdmin):
@@ -76,7 +76,7 @@ class SalaryAdmin(admin.ModelAdmin):
 
     def user_name(self, obj):
         return obj.user.name
-    user_name.short_description = u'用户名'
+    user_name.short_description = '用户名'
 
 
 class LeaveAdmin(admin.ModelAdmin):
@@ -88,7 +88,7 @@ class LeaveAdmin(admin.ModelAdmin):
 
     def user_name(self, obj):
         return obj.user.name
-    user_name.short_description = u'用户名'
+    user_name.short_description = '用户名'
 
 
 class ReportAdmin(admin.ModelAdmin):
@@ -100,7 +100,7 @@ class ReportAdmin(admin.ModelAdmin):
 
     def user_name(self, obj):
         return obj.user.name
-    user_name.short_description = u'用户名'
+    user_name.short_description = '用户名'
 
 
 class Work_Overtime_Admin(admin.ModelAdmin):
@@ -113,11 +113,11 @@ class Work_Overtime_Admin(admin.ModelAdmin):
 
     def user_name(self, obj):
         return obj.user.name
-    user_name.short_description = u'用户名'
+    user_name.short_description = '用户名'
 
 
-class UserAuthAdmin(admin.ModelAdmin):
-    list_display = ('user_name', 'token', 'code', 'send_code_time')
+class UserTokenAdmin(admin.ModelAdmin):
+    list_display = ('user_name', 'token')
     list_display_links = ('user_name', )
     list_per_page = 20
     ordering = ('-user__name',)
@@ -125,18 +125,28 @@ class UserAuthAdmin(admin.ModelAdmin):
 
     def user_name(self, obj):
         return obj.user.name
-    user_name.short_description = u'用户名'
+    user_name.short_description = '用户名'
+
+
+class UserCodeAdmin(admin.ModelAdmin):
+    list_display = ('user_name', 'code', 'send_code_time')
+    list_display_links = ('user_name', )
+    list_per_page = 20
+    ordering = ('-user__name',)
+    search_fields = ('user__name',)
+
+    def user_name(self, obj):
+        return obj.user.name
+    user_name.short_description = '用户名'
 
 
 admin.site.register(User, UserAdmin)
-
-
+admin.site.register(UserToken, UserTokenAdmin)
+admin.site.register(UserCode, UserCodeAdmin)
 admin.site.register(Postion, PostionAdmin)
 admin.site.register(Salary, SalaryAdmin)
 admin.site.register(Leave, LeaveAdmin)
 admin.site.register(Report, ReportAdmin)
 admin.site.register(Work_Overtime, Work_Overtime_Admin)
-admin.site.register(UserAuth, UserAuthAdmin)
 admin.site.register(Department, DepartmentAdmin)
-
 admin.site.register(Position_Level, Position_Level_Admin)

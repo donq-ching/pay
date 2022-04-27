@@ -17,14 +17,14 @@
 '''
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
-from ..models import UserAuth
+from ..models import UserToken
 
-class Lauth(BaseAuthentication):
+class LoginAuth(BaseAuthentication):
     def authenticate(self,request):
-        token = request.GET.get("token")
-        token_obj = UserAuth.objects.filter(token=token).first()
+        token = request.META.get('HTTP_TOKEN')
+        user_token = UserToken.objects.all().filter(token=token).first()
         
-        if not token_obj:
+        if user_token:
+            return user_token.name, token
+        else:
             raise AuthenticationFailed("认证失败")
-        return (token_obj.user,token_obj)
-
