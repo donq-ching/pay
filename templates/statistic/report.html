@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>周计划与日报统计</title>
+	</head>
+	<body>
+		<div id="app">
+			<button @click="upload">查询日报和周计划数据</button>
+            <p>[[ start_date ]]--[[ end_date ]]</p>
+			<p>[[ report_data ]]</p>
+		</div>
+
+	</body>
+	<script src="https://fastly.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"
+		integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+	<script>
+		new Vue({
+			el: "#app",
+			delimiters: ["[[", "]]"],
+			data: {
+				start_date: '',
+				end_date: '',
+				report_data: ''
+			},
+			methods: {
+				upload() {
+					let d = new Date()
+					let start_date = String(d.getFullYear()) + '-' + String(d.getMonth()) + '-' + String(d.getDate())
+					let end_date = String(d.getFullYear()) + '-' + String(d.getMonth()+1) + '-' + String(d.getDate())
+					let _this = this
+					_this.start_date = start_date
+					_this.end_date = end_date
+					$.ajax({
+						type: "GET",
+						data: {
+							start_date: start_date,
+							end_date: end_date
+						},
+						url: "http://127.0.0.1/report/",
+						dataType: "json",
+						success: function(data) {
+							_this.report_data = data
+							console.log(data)
+						},
+						error: function(data) {
+							console.log("错误")
+						},
+					})
+				},
+			},
+		})
+	</script>
+</html>

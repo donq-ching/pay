@@ -25,5 +25,9 @@ urlpatterns = [
 
     # html
     path('load/leave.html', TemplateView.as_view(template_name='load/leave.html')),
-    path('load/report.html', TemplateView.as_view(template_name='load/report.html')),
+    path('load/report_day.html', TemplateView.as_view(template_name='load/report_day.html')),
+    path('load/report_week.html', TemplateView.as_view(template_name='load/report_week.html')),
+    path('statistic/leave.html', TemplateView.as_view(template_name='statistic/leave.html')),
+    path('statistic/report.html', TemplateView.as_view(template_name='statistic/report.html')),
+    path('login.html', TemplateView.as_view(template_name='login.html')),
 ]

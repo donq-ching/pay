@@ -1,11 +1,8 @@
 import pandas as pd
 
-from rest_framework.response import Response
 from django.http import JsonResponse
 
 from ..models import Leave, User, Report
-
-
 
 
 def get_leave_code(leave):
@@ -14,7 +11,6 @@ def get_leave_code(leave):
     for el in leave_choice:
         if el[1] == leave:
             return el[0]
-
 
 def load_leave_data(request):
     '''
@@ -41,7 +37,6 @@ def load_leave_data(request):
 
     if step != 1:
         return JsonResponse(df_list, safe=False, json_dumps_params={'ensure_ascii': False})
-        # return Response(df_list)
 
     # 返回内容：
     # 2. 重复list
@@ -72,9 +67,7 @@ def load_leave_data(request):
         leave.save()
         ret['message'] = '部分上传成功'
 
-    # return Response(ret)
     return JsonResponse(ret, json_dumps_params={'ensure_ascii': False})
-
 
 def load_report_data(request):
     
@@ -106,9 +99,8 @@ def load_report_data(request):
     df_list = df.values.tolist()
     if step != 1:
         return JsonResponse(df_list, safe=False, json_dumps_params={'ensure_ascii': False})
-        # return Response(df_list)
 
-    ret = {'message':'上传失败', '用户不存在': []}
+    ret = {'message':'上传失败', '用户不存在': [], '重复': []}
     for el in df_list:
         user = User.objects.filter(name=el[1])
         if not user:
@@ -120,8 +112,11 @@ def load_report_data(request):
         report.user = user
         report.type = report_type
         report.time = el[0]
-        report.save()
+        try:
+            report.save()
+        except:
+            ret['重复'].append(el)
+            continue
         ret['message'] = '部分上传成功'
 
     return JsonResponse(ret, json_dumps_params={'ensure_ascii': False})
-    # return Response(ret)

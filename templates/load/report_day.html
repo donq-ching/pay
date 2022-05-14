@@ -13,70 +13,58 @@
 			<div class="row">
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 main">
 					<div class="table-responsive" id="app">
-						<h1>请假文件上传</h1>
+						<h1>日报文件上传</h1>
 						<input type="file" id="file" />
 						<button @click="upload('0')">提交</button>
-						<table class="table table-striped" v-if="leave.length!=0">
+						<table class="table table-striped" v-if="report.length!=0">
 							<thead>
 								<tr>
-									<th>审批编号</th>
+									<th>序号</th>
+									<th>汇报时间</th>
 									<th>姓名</th>
-									<th>请假类型</th>
-									<th>开始时间</th>
-									<th>结束时间</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr v-for="el in leave">
+								<tr v-for="(el, index) in report">
+									<td>[[ index ]]</td>
 									<td>[[ el[0] ]]</td>
 									<td>[[ el[1] ]]</td>
-									<td>[[ el[2] ]]</td>
-									<td>[[ el[3] ]]</td>
-									<td>[[ el[4] ]]</td>
 								</tr>
 							</tbody>
 						</table>
-						<button @click="upload('1')" v-if="leave.length!=0">确认上传</button>
+						<button @click="upload('1')" v-if="report.length!=0">确认上传</button>
 						<h1>[[ message.message ]]</h1>
-						<h2 v-if="message.重复.length!=0">上传重复数据:</h2>
-						<table class="table table-striped" v-if="message.重复.length!=0">
-							<thead>
-								<tr>
-									<th>审批编号</th>
-									<th>姓名</th>
-									<th>请假类型</th>
-									<th>开始时间</th>
-									<th>结束时间</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr v-for="el in message.重复">
-									<td>[[ el[0] ]]</td>
-									<td>[[ el[1] ]]</td>
-									<td>[[ el[2] ]]</td>
-									<td>[[ el[3] ]]</td>
-									<td>[[ el[4] ]]</td>
-								</tr>
-							</tbody>
-						</table>
 						<h2 v-if="message.用户不存在.length!=0">上传用户不存在数据:</h2>
 						<table class="table table-striped" v-if="message.用户不存在.length!=0">
 							<thead>
 								<tr>
-									<th>审批编号</th>
+									<th>序号</th>
+									<th>汇报时间</th>
 									<th>姓名</th>
-									<th>请假类型</th>
-									<th>开始时间</th>
-									<th>结束时间</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr v-for="el in message.用户不存在">
+								<tr v-for="(el, index) in message.用户不存在">
+									<td>[[ index ]]</td>
 									<td>[[ el[0] ]]</td>
 									<td>[[ el[1] ]]</td>
-									<td>[[ el[2] ]]</td>
-									<td>[[ el[3] ]]</td>
-									<td>[[ el[4] ]]</td>
+								</tr>
+							</tbody>
+						</table>
+						<h2 v-if="message.重复.length!=0">上传重复数据:</h2>
+						<table class="table table-striped" v-if="message.重复.length!=0">
+							<thead>
+								<tr>
+									<th>序号</th>
+									<th>汇报时间</th>
+									<th>姓名</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(el, index) in message.重复">
+									<td>[[ index ]]</td>
+									<td>[[ el[0] ]]</td>
+									<td>[[ el[1] ]]</td>
 								</tr>
 							</tbody>
 						</table>
@@ -97,11 +85,11 @@
 				el: "#app",
 				delimiters: ["[[", "]]"],
 				data: {
-					leave: [],
+					report: [],
 					message: {
 						'message': '',
-						'重复': [],
-						'用户不存在': []
+						'用户不存在': [],
+						'重复': []
 					}
 				},
 				methods: {
@@ -110,11 +98,14 @@
 						var formData = new FormData()
 						formData.append("data", data)
 						formData.append("step", step)
+						// 1 代表日报
+						// 0 代表周计划
+						formData.append("report_type", 1)
 						let _this = this
 						$.ajax({
 							type: "POST",
 							data: formData,
-							url: "http://127.0.0.1/load_leave_data/",
+							url: "http://127.0.0.1/load_report_data/",
 							dataType: "json",
 							async: false,
 							cache: false,
@@ -122,14 +113,10 @@
 							processData: false,
 							success: function(data) {
 								if (step == '0') {
-									// 只上传输出查看，不上传
-									_this.leave = data
+									_this.report = data
 								} else {
-									// 上传
 									_this.message = data
-									console.log(_this.message)
 								}
-
 							},
 							error: function(data) {
 								console.log("错误")

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-8ow6b5xc3&1!wkjlc^4iy%o9fq@qa8!=xd*hu)w7o-0k+qt@@z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -128,55 +128,15 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework_simplejwt.authentication.JWTAuthentication',  # 使用rest_framework_simplejwt验证身份
-#         'rest_framework.authentication.SessionAuthentication',
-#         'rest_framework.authentication.BasicAuthentication'
-#     ],
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticated'    # 默认权限为验证用户
-#     ],
-# }
-
-# import datetime
-# # simplejwt配置， 需要导入datetime模块
-# SIMPLE_JWT = {
-#     # token有效时长
-#     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
-#     # token刷新后的有效时间
-#     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
-# }
-
-
-# # 发送邮箱验证码
-# EMAIL_HOST = "smtp.qq.com"     # 服务器
-# EMAIL_PORT = 25                 # 一般情况下都为25
-# EMAIL_HOST_USER = "qq账号@qq.com"     # 账号
-# EMAIL_HOST_PASSWORD = "授权码"     # （上面保存的授权码）
-# EMAIL_USE_TLS = True       # 一般都为False
-# EMAIL_FROM = "qq账号@qq.com"      # 邮箱来自
-# email_title = '邮箱激活'
-
 # simpleUI
 SIMPLEUI_HOME_INFO = False
 SIMPLEUI_HOME_QUICK = True
 SIMPLEUI_HOME_ACTION = True
 SIMPLEUI_ANALYSIS = False
-# SIMPLEUI_HOME_TITLE = 【首页】按钮文案配置
-# SIMPLEUI_HOME_PAGE = 可用于嵌入其他链接，这里可以直接方便的嵌入报表链接
 SIMPLEUI_HOME_ICON = 'el el-icon-platform-eleme'
-# ICON 支持element-ui和fontawesome  eg：fa fa-user
-
-# 图标ICON 样式查看
-# https://element.eleme.cn/#/zh-CN/component/icon
-# http://www.fontawesome.com.cn/cheatsheet/
-
-# project的setting文件中增加如下配置，icon信息可以参考http://www.fontawesome.com.cn/cheatsheet/
 SIMPLEUI_CONFIG = {
-    'system_keep': False,  # 关闭系统菜单
-    # 'menu_display': ['app01', '认证与授权'],
-    'dynamic': False,    # 设置是否开启动态菜单, 默认为False. 如果开启, 则会在每次用户登陆时动态展示菜单内容
+    'system_keep': False,
+    'dynamic': False,
     'menus': [{
         'app': 'app01',
         'name': '薪酬应用',
@@ -258,10 +218,42 @@ SIMPLEUI_CONFIG = {
                 'url': 'http://127.0.0.1/load/leave.html'
             },
             {
-                'name': '周计划与日报',
+                'name': '日报',
                 'icon': 'fa fa-th-list',
-                'url': 'http://127.0.0.1/load/report.html'
+                'url': 'http://127.0.0.1/load/report_day.html'
+            },
+            {
+                'name': '周计划',
+                'icon': 'fa fa-th-list',
+                'url': 'http://127.0.0.1/load/report_week.html'
+            }
+        ]
+    },{
+        'name': '数据统计',
+        'icon': 'fa fa-table',
+        'models': [
+            {
+                'name': '请假',
+                'icon': 'fa fa-user',
+                'url': 'http://127.0.0.1/statistic/leave.html'
+            },
+            {
+                'name': '日报与周计划',
+                'icon': 'fa fa-th-list',
+                'url': 'http://127.0.0.1/statistic/report.html'
             }
         ]
     }]
 }
+
+
+# 发送邮箱验证码
+EMAIL_HOST = "smtp.qq.com"
+EMAIL_PORT = 25
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_USE_TLS = True
+EMAIL_FROM = "rechi@foxmail.com" 
+
+STATIC_ROOT = '/static/'
+STATIC_URL = '/static/'

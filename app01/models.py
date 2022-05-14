@@ -16,13 +16,10 @@
 '''
 
 
-import json
 from datetime import datetime
 from django.db import models
-
-# 增加了UID字段,大改
 class User(models.Model):
-    uid = models.CharField(verbose_name='用户唯一ID', primary_key=True, max_length=128)
+    # uid = models.CharField(verbose_name='用户唯一ID', primary_key=True, max_length=128)
     name = models.CharField(max_length=64, verbose_name='用户名')
     degree_choice = ((0, '高中'), (1, '专科'), (2, '本科'), (3, '硕士'), (4, '博士'))
     degree = models.SmallIntegerField(verbose_name='选择学历',
@@ -47,7 +44,7 @@ class User(models.Model):
 
 
 class UserToken(models.Model):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         to="User", on_delete=models.CASCADE, verbose_name='关联用户')
     token = models.CharField(max_length=64, unique=True, verbose_name='token')
 
@@ -58,19 +55,11 @@ class UserToken(models.Model):
 
 
 class UserCode(models.Model):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         to="User", on_delete=models.CASCADE, verbose_name='关联用户')
-    code = models.CharField(max_length=64, unique=True, verbose_name='验证码')
+    code = models.CharField(max_length=64, verbose_name='验证码')
     send_code_time = models.DateTimeField(
         verbose_name='发送时间', default=datetime.now)
-
-    # def __str__(self):
-    #     _dict = {
-    #         'token': self.token,
-    #         'code': self.code,
-    #         'email': self.user.email,
-    #     }
-    #     return json.dumps(_dict)
 
     class Meta:
         db_table = 'usercode'
@@ -106,17 +95,21 @@ class Position_Level(models.Model):
 class Postion(models.Model):
     user = models.OneToOneField(to=User, verbose_name='关联用户',
                                 on_delete=models.CASCADE, primary_key=True)
-    is_probation = models.BooleanField(verbose_name='是否是在试用期', default=True)
-    is_formal = models.BooleanField(verbose_name='是否是转正', default=False)
-    is_direct = models.BooleanField(verbose_name='是否是直管', default=False)
+    is_probation = models.BooleanField(verbose_name='是否实习', default=True)
+    # is_formal = models.BooleanField(verbose_name='是否转正', default=False)
+    is_direct = models.BooleanField(verbose_name='是否直管', default=False)
+    is_manager = models.BooleanField(verbose_name='是否主管', default=False)
+    is_labor = models.BooleanField(verbose_name='是否劳务', default=False)
+    # is_social = models.BooleanField(verbose_name='是否社保', default=False)
+    
     entry_date = models.DateField(verbose_name='入职日期')
-    formal_date = models.DateField(verbose_name='转正日期', null=True)
-    quit_date = models.DateField(verbose_name='离职时间', null=True)
-    probation_end_date = models.DateField(verbose_name='试用期截止时间', null=True)
+    # formal_date = models.DateField(verbose_name='转正日期', null=True, blank=True)
+    quit_date = models.DateField(verbose_name='离职时间', null=True, blank=True)
+    probation_end_date = models.DateField(verbose_name='试用期截止时间', null=True, blank=True)
+    
     postion_level = models.ForeignKey(
         to=Position_Level, verbose_name='关联等级', on_delete=models.CASCADE)
-    is_manager = models.BooleanField(verbose_name='是否是主管', default=False)
-    is_labor = models.BooleanField(verbose_name='是否劳务', default=False)
+
     company = models.CharField(max_length=128, verbose_name='所属公司')
 
     class Meta:
@@ -129,16 +122,20 @@ class Postion(models.Model):
 class Salary(models.Model):
     user = models.OneToOneField(to=User, verbose_name='关联用户',
                                 on_delete=models.CASCADE, primary_key=True)
-    probation_salary = models.IntegerField(verbose_name='试用期薪资')
-    formal_salary = models.IntegerField(verbose_name='转正后薪资')
-    performance_salary = models.IntegerField(verbose_name='绩效薪资')
-    management_salary = models.IntegerField(verbose_name='管理岗薪资')
-    commission = models.IntegerField(verbose_name='提成')
-    social = models.IntegerField(verbose_name='社保')
-    fund = models.IntegerField(verbose_name='公积金')
-    tax = models.IntegerField(verbose_name='个税')
-    modification_before_tax = models.IntegerField(verbose_name='税前工资调整')
-    modification_after_tax = models.IntegerField(verbose_name='税后工资调整')
+    probation_salary = models.FloatField(verbose_name='试用期薪资')
+    formal_salary = models.FloatField(verbose_name='转正后薪资')
+    performance_salary = models.FloatField(verbose_name='绩效薪资')
+    performance_salary_coefficient = models.FloatField(verbose_name='绩效系数', default=1)
+    management_salary = models.FloatField(verbose_name='管理岗薪资')
+    subsidy = models.FloatField(verbose_name='其他补贴', default=0)
+    commission = models.FloatField(verbose_name='提成', default=0)
+    social_radix = models.FloatField(verbose_name='社保基数', default=0)
+    fund_radix = models.FloatField(verbose_name='公积金基数', default=0)
+    social = models.FloatField(verbose_name='社保', default=0)
+    fund = models.FloatField(verbose_name='公积金', default=0)
+    tax = models.FloatField(verbose_name='个税', default=0)
+    modification_before_tax = models.FloatField(verbose_name='税前工资调整', default=0)
+    modification_after_tax = models.FloatField(verbose_name='税后工资调整', default=0)
 
     class Meta:
         db_table = 'salary'
@@ -177,6 +174,7 @@ class Report(models.Model):
         db_table = 'report'
         verbose_name = '周计划与日报'
         verbose_name_plural = verbose_name
+        unique_together = (('user', 'type', 'time'),)
 
 
 class Work_Overtime(models.Model):

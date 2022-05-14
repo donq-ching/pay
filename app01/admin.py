@@ -29,6 +29,30 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class UserTokenAdmin(admin.ModelAdmin):
+    list_display = ('user_name', 'token')
+    list_display_links = ('user_name', )
+    list_per_page = 20
+    ordering = ('-user__name',)
+    search_fields = ('user__name',)
+
+    def user_name(self, obj):
+        return obj.user.name
+    user_name.short_description = '用户名'
+
+
+class UserCodeAdmin(admin.ModelAdmin):
+    list_display = ('user_name', 'code', 'send_code_time')
+    list_display_links = ('user_name', )
+    list_per_page = 20
+    ordering = ('-user__name',)
+    search_fields = ('user__name',)
+
+    def user_name(self, obj):
+        return obj.user.name
+    user_name.short_description = '用户名'
+
+
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ('name', 'datail')
     list_display_links = ('name', )
@@ -46,8 +70,8 @@ class Position_Level_Admin(admin.ModelAdmin):
 
 
 class PostionAdmin(admin.ModelAdmin):
-    list_display = ('user_name', 'is_probation', 'is_formal', 'is_direct', 'entry_date', 'formal_date',
-                    'quit_date', 'probation_end_date', 'department_name', 'level_name', 'is_manager', 'is_labor', 'company')
+    list_display = ('user_name', 'is_probation', 'is_direct', 'is_manager', 'is_labor', 'entry_date',
+                    'quit_date', 'probation_end_date', 'department_name', 'level_name', 'company')
     list_display_links = ('user_name', )
     list_per_page = 20
     ordering = ('-user__name',)
@@ -58,7 +82,7 @@ class PostionAdmin(admin.ModelAdmin):
     user_name.short_description = '用户名'
 
     def department_name(self, obj):
-        return obj.level.department.name
+        return obj.postion_level.department.name
     department_name.short_description = '部门'
 
     def level_name(self, obj):
@@ -67,8 +91,8 @@ class PostionAdmin(admin.ModelAdmin):
 
 
 class SalaryAdmin(admin.ModelAdmin):
-    list_display = ('user_name', 'probation_salary', 'formal_salary', 'performance_salary', 'management_salary',
-                    'commission', 'social', 'fund', 'tax', 'modification_before_tax', 'modification_after_tax')
+    list_display = ('user_name', 'probation_salary', 'formal_salary', 'performance_salary', 'performance_salary_coefficient', 'management_salary',
+                    'subsidy', 'commission', 'social_radix', 'fund_radix', 'social', 'fund', 'tax', 'modification_before_tax', 'modification_after_tax')
     list_display_links = ('user_name', )
     list_per_page = 20
     ordering = ('-user__name',)
@@ -106,30 +130,6 @@ class ReportAdmin(admin.ModelAdmin):
 class Work_Overtime_Admin(admin.ModelAdmin):
     list_display = ('work_overtime_id', 'user_name', 'detail',
                     'overtime_start_datetime', 'overtime_end_datetime')
-    list_display_links = ('user_name', )
-    list_per_page = 20
-    ordering = ('-user__name',)
-    search_fields = ('user__name',)
-
-    def user_name(self, obj):
-        return obj.user.name
-    user_name.short_description = '用户名'
-
-
-class UserTokenAdmin(admin.ModelAdmin):
-    list_display = ('user_name', 'token')
-    list_display_links = ('user_name', )
-    list_per_page = 20
-    ordering = ('-user__name',)
-    search_fields = ('user__name',)
-
-    def user_name(self, obj):
-        return obj.user.name
-    user_name.short_description = '用户名'
-
-
-class UserCodeAdmin(admin.ModelAdmin):
-    list_display = ('user_name', 'code', 'send_code_time')
     list_display_links = ('user_name', )
     list_per_page = 20
     ordering = ('-user__name',)

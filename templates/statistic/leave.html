@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>leave统计</title>
+	</head>
+	<body>
+		<div id="app">
+			<button @click="upload">查询请假数据</button>
+			<h2 v-if="start_date!=''">统计起止时间</h2>
+			<h3 v-if="start_date!=''">[[ start_date ]]到[[ end_date ]]</h3>
+			<h2 v-if="leave_data!=''">查询结果</h2>
+			<ul v-if="leave_data!=''">
+				<li v-for="(value,key,index) in leave_data.请假统计">
+					<h3>[[ key ]]</h3>
+					<p>非调休假: [[ value.非调休假 ]]天</p>
+					<p>调休假: [[ value.调休假 ]]天</p>
+				</li>
+			</ul>
+		</div>
+
+	</body>
+	<script src="https://fastly.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"
+		integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+	<script>
+		new Vue({
+			el: "#app",
+			delimiters: ["[[", "]]"],
+			data: {
+				leave_data: "",
+				start_date: "",
+                end_date: "",
+			},
+			methods: {
+				upload() {
+					let d = new Date()
+					let start_date  = String(d.getFullYear()) + '-' + String(d.getMonth()) + '-' + String(d.getDate()) +
+						' 08:30'
+                    let end_date  = String(d.getFullYear()) + '-' + String(d.getMonth()+1) + '-' + String(d.getDate()) +
+						' 08:30'
+					let _this = this
+					_this.start_date = start_date
+                    _this.end_date = end_date
+					$.ajax({
+						type: "GET",
+						data: {
+							start_date: start_date,
+                            end_date: end_date
+						},
+						url: "http://127.0.0.1/leave/",
+						dataType: "json",
+						success: function(data) {
+							_this.leave_data = data
+						},
+						error: function(data) {
+							console.log("错误")
+						},
+					})
+				},
+			},
+		})
+	</script>
+</html>
